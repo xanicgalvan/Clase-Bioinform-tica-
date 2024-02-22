@@ -1,0 +1,9 @@
+#para abrir el contenido#
+ls
+#para seleccionar una apartado del contenido (le puse Music porque ahí estaba mis archivos#
+cd .\Music
+#para abrir el contendio de ese apartado#
+ls
+#para concatenar mis secuencias#
+Get-Content A1.fasta, A2.fasta, A3.fasta, A4.fasta, A5.fasta | Set-Content JoinedFileA12345.fasta
+
