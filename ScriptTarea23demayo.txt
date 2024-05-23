@@ -1,0 +1,54 @@
+#1.Abrir mis datos de"mtcars"#
+str(mtcars)
+data<-as.matrix(mtcars)
+View(data)
+#Heatmap#
+heatmap(data, scale="column")
+heatmap(data, Colv = NA, Rowv = NA, scale="column")
+#Correlaciones para generar ANOVA#
+my_group <- as.numeric(as.factor(substr(rownames(data), 1 , 1)))
+mtcars$cyl <- as.factor(mtcars$cyl)
+mtcars$am <- as.factor(mtcars$am)
+mtcars$vs <- as.factor(mtcars$vs)
+mtcars$gear <- as.factor(mtcars$gear)
+class(mtcars$cyl)
+class(mtcars$am)
+class(mtcars$vs)
+class(mtcars$gear)
+AnovaOneWay <- aov(wt~cyl, data = mtcars)
+summary(AnovaOneWay)
+#Promedio obtenido con loops#
+df<-mtcars
+df
+View(df)
+output<-vector("double",ncol(df))
+for(i in seq_along(df)){output[[i]] <- mean(df[[i]])}
+output  
+#PCA#
+summary(mtcars)
+pcaCars <- princomp(mtcars, cor = TRUE)
+names(pcaCars)
+summary(pcaCars)
+plot(pcaCars)
+plot(pcaCars, type = "l")
+carsHC <- hclust(dist(pcaCars$scores), method = "ward.D2")
+plot(carsHC)
+carsClusters <- cutree(carsHC, k = 3)
+plot(carsHC)
+rect.hclust(carsHC, k=3, border="red")
+carsDf <- data.frame(pcaCars$scores, "cluster" = factor(carsClusters))
+str(carsDf)
+install.packages("ggplot2")
+install.packages("ggrepel")
+library(ggplot2)
+library(ggrepel)
+ggplot(carsDf,aes(x=Comp.1, y=Comp.2)) +
+  +     geom_text_repel(aes(label = rownames(carsDf))) +
+  +     theme_classic() +
+  +     geom_hline(yintercept = 0, color = "gray70") +
+  +     geom_vline(xintercept = 0, color = "gray70") +
+  +     geom_point(aes(color = cluster), alpha = 0.55, size = 3) +
+  +     xlab("PC1") +
+  +     ylab("PC2") + 
+  +     xlim(-5, 6) + 
+  +     ggtitle("PCA plot of Cars")
